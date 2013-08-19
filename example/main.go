@@ -3,7 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"grow"
+	"github.com/scarlson/grow"
 	"html/template"
 	"io/ioutil"
 	"net/http"
