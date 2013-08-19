@@ -1,18 +1,15 @@
-grow
-====
+# grow #
 
 Golang reddit OAuth Wrapper
 
 
-install
-=======
+### install ###
 
 ```
 go get github.com/scarlson/grow
 ```
 
-usage
-=====
+### usage ###
 
 ```go
 import "github.com/scarlson/grow"
