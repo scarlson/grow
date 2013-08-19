@@ -31,10 +31,10 @@ type Comment struct {
 	Downs                  float64
 }
 
-func (self *commentThing) Upvote() error {
+func (self *Comment) Upvote() error {
 	return nil
 }
 
-func (self *commentThing) Downvote() error {
+func (self *Comment) Downvote() error {
 	return nil
 }

@@ -26,5 +26,5 @@ type Message struct {
 }
 
 func (self *Message) Send() error {
-    return nil
+	return nil
 }

@@ -29,7 +29,6 @@ type votable interface {
 }
 
 type commentable interface {
-
 }
 
 /* ===========================================================================
@@ -52,8 +51,8 @@ func randInt(min int, max int) int {
                          PUBLIC FUNCS
 =========================================================================== */
 
-func Comment() (*Comment, error) {
-    
+func SubmitComment() (*Comment, error) {
+	return nil, nil
 }
 
 func Me() (*Account, error) {
@@ -62,7 +61,7 @@ func Me() (*Account, error) {
 	req, err := http.NewRequest("GET", p, nil)
 
 	// build required headers
-	req.Header.Add("User-Agent", "/u/kamoi golang oauth wrapper")
+	req.Header.Add("User-Agent", "useragent")
 	access_token := fmt.Sprintf("bearer %s", transport.Token.AccessToken)
 	req.Header.Add("Authorization", access_token)
 

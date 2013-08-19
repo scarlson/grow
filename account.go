@@ -33,7 +33,7 @@ type Account struct {
 func (user Account) Comments() ([]Comment, error) {
 	url := fmt.Sprintf("http://reddit.com/user/%s/comments.json", user.Name)
 	commentThing := &commentListingThing{}
-	req, err := noauthRequest("GET", url, "asdf")
+	req, err := noauthRequest("GET", url, "")
 	if err != nil {
 		return []Comment{}, err
 	}

@@ -24,9 +24,9 @@ type Subreddit struct {
 }
 
 func Subscribe() error {
-    return nil
+	return nil
 }
 
 func About() error {
-
+    return nil
 }

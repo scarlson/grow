@@ -38,7 +38,7 @@ func Init() {
     if err != nil {
         panic(err)
     }
-	grow.Config("/u/kamoi testing golang oauth", "identity,read", conf.RedditId, conf.RedditSecret)
+	grow.Config(conf.UserAgent, "identity,read", conf.RedditId, conf.RedditSecret)
 }
 
 var notAuthenticatedTemplate = template.Must(template.New("").Parse(`
