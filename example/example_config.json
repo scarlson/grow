@@ -1,0 +1,5 @@
+{
+"UserAgent":"", // e.g.: "/u/username's golang reddit oauth wrapper"
+"RedditSecret":"", // app secret from reddit app config
+"RedditId":"" // app id from reddit app config
+}
