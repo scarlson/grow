@@ -18,6 +18,7 @@ import (
 var config = &oauth.Config{}
 var requestURL = "https://oauth.reddit.com"
 var state = ""
+var UserAgent = ""
 var transport = &oauth.Transport{
 	Config:    config,
 	Transport: &http.Transport{},
@@ -57,8 +58,8 @@ func randInt(min int, max int) int {
 
 // this is redundant to the comment method that should do the same.  Then again,
 // it should be a commentable interface so you can comment on links as well
-func SubmitComment() (*Comment, error) {
-	return nil, nil
+func SubmitComment(commentable) error {
+	return nil
 }
 
 // reddit's api/v1/me handler, returns the authed user as an Account object,
@@ -69,7 +70,7 @@ func Me() (*Account, error) {
 	req, err := http.NewRequest("GET", p, nil)
 
 	// build required headers
-	req.Header.Add("User-Agent", "useragent")
+	req.Header.Add("User-Agent", UserAgent)
 	access_token := fmt.Sprintf("bearer %s", transport.Token.AccessToken)
 	req.Header.Add("Authorization", access_token)
 
@@ -92,7 +93,7 @@ func Me() (*Account, error) {
 // fetch a user's about.json and return its account object, doesn't use OAuth
 func GetUser(name string) (Account, error) {
 	url := fmt.Sprintf("http://reddit.com/user/%s/about.json", name)
-	req, err := noauthRequest("GET", url, "")
+	req, err := noauthRequest("GET", url, UserAgent)
 	thing := &accountThing{}
 	if err != nil {
 		return Account{}, err
@@ -108,7 +109,7 @@ func GetUser(name string) (Account, error) {
 // fetch a subreddit's about.json, return a subreddit object, uses OAuth -- should it not?
 func GetSubreddit(name string) (Subreddit, error) {
 	suburl := fmt.Sprintf("/r/%s/about.json", name)
-	contents, err := oauthRequest("GET", suburl, "")
+	contents, err := oauthRequest("GET", suburl, UserAgent)
 	subt := &subredditThing{}
 	err = json.Unmarshal(contents, subt)
 	sub := subt.Data
@@ -163,6 +164,7 @@ func Config(useragent string, scope string, redditid string, redditsecret string
 	config.AuthURL = "https://ssl.reddit.com/api/v1/authorize"
 	config.TokenURL = "https://ssl.reddit.com/api/v1/access_token"
 	config.RedirectURL = "http://redditbank.com/login"
+	UserAgent = useragent
 	return true
 }
 
