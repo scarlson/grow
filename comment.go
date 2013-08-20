@@ -8,7 +8,6 @@ type commentThing struct {
 	Data Comment
 }
 
-
 // data payload from a comment wrapper
 type Comment struct {
 	Approved_by            interface{}

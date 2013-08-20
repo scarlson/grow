@@ -31,7 +31,6 @@ type Account struct {
 	Over_18            bool
 }
 
-
 // fetch 100 recent comments for user
 func (user Account) Comments() ([]Comment, error) {
 	url := fmt.Sprintf("http://reddit.com/user/%s/comments.json", user.Name)

@@ -8,7 +8,6 @@ type linkThing struct {
 	Data Link
 }
 
-
 // data payload from a link wrapper
 type Link struct {
 	Author                 interface{}

@@ -33,5 +33,5 @@ func Subscribe() error {
 
 // retrieve subreddit about.json, needs to return something not an error
 func About() error {
-    return nil
+	return nil
 }

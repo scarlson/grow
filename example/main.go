@@ -2,33 +2,32 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
+	//"fmt"
 	"github.com/scarlson/grow"
 	"html/template"
 	"io/ioutil"
 	"net/http"
 )
 
+// config data gets loaded from local json file
 type Config struct {
-    // config data gets loaded from local json file
 	RedditSecret string
 	RedditId     string
 	UserAgent    string
 }
 
+// load process reads local json file to fill config struct
 func (self *Config) load(path string) error {
-    // load process reads local json file to fill config struct
 	b, err := ioutil.ReadFile(path)
 	if err != nil {
 		return err
 	}
 	err = json.Unmarshal(b, &self)
 	if err != nil {
-        return err
+		return err
 	}
 	return nil
 }
-
 
 // html templates for displaying data and required user actions
 var notAuthenticatedTemplate = template.Must(template.New("").Parse(`
@@ -43,48 +42,46 @@ var userInfoTemplate = template.Must(template.New("").Parse(`
 </body></html>
 `))
 
-
 var conf = &Config{}
 
+// perform config load and initialize grow library with required oauth fields
 func Init() {
-    // perform config load and initialize grow library with required oauth fields
 	err := conf.load("./config.json")
-    if err != nil {
-        panic(err)
-    }
+	if err != nil {
+		panic(err)
+	}
 	grow.Config(conf.UserAgent, "identity,read", conf.RedditId, conf.RedditSecret)
 }
-
 
 /* ===========================================================================
                              HTTP HANDLERS
 =========================================================================== */
 
+// display index template for user auth button
 func handleRoot(w http.ResponseWriter, r *http.Request) {
-    // display index template for user auth button
 	notAuthenticatedTemplate.Execute(w, nil)
 }
 
+// pass http handlers to grow library for oauth redirect
 func handleAuthorize(w http.ResponseWriter, r *http.Request) {
-    // pass http handlers to grow library for oauth redirect
-    grow.Authorize(w, r)
+	grow.Authorize(w, r)
 }
 
+// callback from reddit, process oauth response
 func handleOAuth2Callback(w http.ResponseWriter, r *http.Request) {
-	// callback from reddit, process oauth response
-    user, _ := grow.Authorized(w, r)
+	user, _ := grow.Authorized(w, r)
 	data := make(map[string]interface{})
-    data["user"] = user.Name
-    otro, _ := grow.GetUser("kn0thing")
-    data["k"] = otro.Name
-    sub, _ := grow.GetSubreddit("redditdev")
-    data["sub"] = sub.Display_name
-    data["comments"], _ = user.Comments()
-    userInfoTemplate.Execute(w, data)
+	data["user"] = user.Name
+	otro, _ := grow.GetUser("kn0thing")
+	data["k"] = otro.Name
+	sub, _ := grow.GetSubreddit("redditdev")
+	data["sub"] = sub.Display_name
+	data["comments"], _ = user.Comments()
+	userInfoTemplate.Execute(w, data)
 }
 
 func main() {
-    Init()
+	Init()
 	http.HandleFunc("/", handleRoot)
 	http.HandleFunc("/authorize", handleAuthorize)
 	http.HandleFunc("/login", handleOAuth2Callback)
