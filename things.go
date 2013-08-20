@@ -1,6 +1,6 @@
 package grow
 
-//  Base thing used to determine what we're working with
+//  Base wrapper object used to determine what reddit object working with
 type Thing struct {
 	Id   string
 	Name string

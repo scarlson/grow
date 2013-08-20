@@ -1,6 +1,6 @@
 package grow
 
-// Type: t6_
+// Type: t6_, reddit award wrapper
 type awardThing struct {
 	Id   string
 	Name string
@@ -8,5 +8,6 @@ type awardThing struct {
 	Data Award
 }
 
+// data payload from award wrapper
 type Award struct {
 }

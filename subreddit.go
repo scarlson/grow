@@ -1,6 +1,6 @@
 package grow
 
-// Type: t5_
+// Type: t5_, reddit subreddit wrapper
 type subredditThing struct {
 	Id   string
 	Name string
@@ -8,6 +8,7 @@ type subredditThing struct {
 	Data Subreddit
 }
 
+// data payload for subreddit wrapper
 type Subreddit struct {
 	Accounts_active    float64
 	Description        interface{}
@@ -23,10 +24,14 @@ type Subreddit struct {
 	Url                interface{}
 }
 
+// subscribe to this subreddit for the authed user
+//
+// is there an Unsubscribe?  Or does Subscribe toggle?
 func Subscribe() error {
 	return nil
 }
 
+// retrieve subreddit about.json, needs to return something not an error
 func About() error {
     return nil
 }

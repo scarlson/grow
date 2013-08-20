@@ -1,6 +1,6 @@
 package grow
 
-// Type: t1_
+// Type: t1_, reddit comment wrapper
 type commentThing struct {
 	Id   string
 	Name string
@@ -8,6 +8,8 @@ type commentThing struct {
 	Data Comment
 }
 
+
+// data payload from a comment wrapper
 type Comment struct {
 	Approved_by            interface{}
 	Author                 interface{}
@@ -31,10 +33,12 @@ type Comment struct {
 	Downs                  float64
 }
 
+// Upvote this comment for the authed user
 func (self *Comment) Upvote() error {
 	return nil
 }
 
+// Downvote this comment for the authed user
 func (self *Comment) Downvote() error {
 	return nil
 }

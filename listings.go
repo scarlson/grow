@@ -1,11 +1,12 @@
 package grow
 
-// Kind: Listing
+// Kind: Listing, generic listing wrapper - houses abritrary data types
 type listingThing struct {
 	Kind string
 	Data Listing
 }
 
+// generic listing object, arbitrary data types
 type Listing struct {
 	Before   interface{}
 	After    interface{}
@@ -13,6 +14,7 @@ type Listing struct {
 	Children []interface{}
 }
 
+// Array of reddit account wrapper objects
 type AccountListing struct {
 	Before   interface{}
 	After    interface{}
@@ -20,6 +22,7 @@ type AccountListing struct {
 	Children []accountThing
 }
 
+// Array of reddit subreddit wrapper objects
 type SubredditListing struct {
 	Before   interface{}
 	After    interface{}
@@ -27,11 +30,13 @@ type SubredditListing struct {
 	Children []subredditThing
 }
 
+// Array of reddit comment wrapper objects
 type commentListingThing struct {
 	Kind string
 	Data CommentListing
 }
 
+// Array of reddit comment payloads
 type CommentListing struct {
 	Before   interface{}
 	After    interface{}

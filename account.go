@@ -5,7 +5,7 @@ import (
 	"fmt"
 )
 
-// Type: t2_
+// Type: t2, reddit account wrapper
 type accountThing struct {
 	Id   string
 	Name string
@@ -13,6 +13,7 @@ type accountThing struct {
 	Data Account
 }
 
+// data payload from an account wrapper
 type Account struct {
 	Comment_karma      float64
 	Created            interface{}
@@ -30,6 +31,8 @@ type Account struct {
 	Over_18            bool
 }
 
+
+// fetch 100 recent comments for user
 func (user Account) Comments() ([]Comment, error) {
 	url := fmt.Sprintf("http://reddit.com/user/%s/comments.json", user.Name)
 	commentThing := &commentListingThing{}

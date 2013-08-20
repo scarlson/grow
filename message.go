@@ -1,6 +1,6 @@
 package grow
 
-// Type: t4_
+// Type: t4_, reddit message wrapper
 type messageThing struct {
 	Id   string
 	Name string
@@ -8,6 +8,7 @@ type messageThing struct {
 	Data Message
 }
 
+// data payload for message wrapper
 type Message struct {
 	Author        interface{}
 	Body          interface{}
@@ -25,6 +26,7 @@ type Message struct {
 	Was_comment   bool
 }
 
+// send constructed message on behalf of authed user
 func (self *Message) Send() error {
 	return nil
 }

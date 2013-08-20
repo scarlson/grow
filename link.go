@@ -1,6 +1,6 @@
 package grow
 
-// Type: t3_
+// Type: t3_, reddit link wrapper
 type linkThing struct {
 	Id   string
 	Name string
@@ -8,6 +8,8 @@ type linkThing struct {
 	Data Link
 }
 
+
+// data payload from a link wrapper
 type Link struct {
 	Author                 interface{}
 	Author_flair_css_class interface{}
@@ -39,10 +41,12 @@ type Link struct {
 	Downs                  float64
 }
 
+// upvote the link for the authed user
 func (self *Link) Upvote() error {
 	return nil
 }
 
+// downvote the link for the authed user
 func (self *Link) Downvote() error {
 	return nil
 }

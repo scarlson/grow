@@ -1,6 +1,6 @@
 package grow
 
-// Type: t8_
+// Type: t8_, reddit promotional wrapper
 type promoThing struct {
 	Id   string
 	Name string
@@ -8,5 +8,6 @@ type promoThing struct {
 	Data PromoCampaign
 }
 
+// data payload for promotional wrapper
 type PromoCampaign struct {
 }
