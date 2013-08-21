@@ -61,7 +61,7 @@ func randInt(min int, max int) int {
 // api_type, text, thing_id, uh
 func SubmitComment(le commentable) error {
 	if !strings.Contains(config.Scope, "submit") {
-		return &Account{}, nil // TODO: out of scope error
+		return nil // TODO: out of scope error
 	}
 	return nil
 }
@@ -69,7 +69,7 @@ func SubmitComment(le commentable) error {
 // api/del, delete a comment
 func DelComment(le *Comment) error {
 	if !strings.Contains(config.Scope, "edit") {
-		return &Account{}, nil // TODO: out of scope error
+		return nil // TODO: out of scope error
 	}
 	return nil
 }
@@ -77,7 +77,7 @@ func DelComment(le *Comment) error {
 // api/editusertext, edit a comment or self post
 func EditUserText() error {
 	if !strings.Contains(config.Scope, "edit") {
-		return &Account{}, nil // TODO: out of scope error
+		return nil // TODO: out of scope error
 	}
 	return nil
 }
@@ -85,7 +85,7 @@ func EditUserText() error {
 // api/info, fetch a link or list of links by url
 func LinkInfo() error {
 	if !strings.Contains(config.Scope, "read") {
-		return &Account{}, nil // TODO: out of scope error
+		return nil // TODO: out of scope error
 	}
 	return nil
 }
@@ -93,7 +93,7 @@ func LinkInfo() error {
 // api/marknsfw, report a comment/link as NSFW
 func MarkNSFW() error {
 	if !strings.Contains(config.Scope, "modposts") {
-		return &Account{}, nil // TODO: out of scope error
+		return nil // TODO: out of scope error
 	}
 	return nil
 }
@@ -101,7 +101,7 @@ func MarkNSFW() error {
 // api/set_contest_mode, set an object's "contest" mode
 func SetContest(val bool) error {
 	if !strings.Contains(config.Scope, "modposts") {
-		return &Account{}, nil // TODO: out of scope error
+		return nil // TODO: out of scope error
 	}
 	return nil
 }
@@ -109,7 +109,7 @@ func SetContest(val bool) error {
 // api/set_subreddit_sticky, set a link as subreddit's sticky
 func SetSubredditSticky() error {
 	if !strings.Contains(config.Scope, "modposts") {
-		return &Account{}, nil // TODO: out of scope error
+		return nil // TODO: out of scope error
 	}
 	return nil
 }
@@ -117,7 +117,7 @@ func SetSubredditSticky() error {
 // api/submit, submit a link to a subreddit
 func Submit() error {
 	if !strings.Contains(config.Scope, "submit") {
-		return &Account{}, nil // TODO: out of scope error
+		return nil // TODO: out of scope error
 	}
 	return nil
 }
@@ -190,7 +190,7 @@ func GetUser(name string) (Account, error) {
 // should refactor to return SubredditThing instead
 func GetSubreddit(name string) (Subreddit, error) {
 	if !strings.Contains(config.Scope, "read") {
-		return &Account{}, nil // TODO: out of scope error
+		return Subreddit{}, nil // TODO: out of scope error
 	}
 	suburl := fmt.Sprintf("/r/%s/about.json", name)
 	contents, err := oauthRequest("GET", suburl, UserAgent)
@@ -222,7 +222,7 @@ func noauthRequest(method string, url string, user string) ([]byte, error) {
 
 // send an oauthed request using a tokenized transport, data returned will depend on authed user
 func oauthRequest(method string, path string, user string) ([]byte, error) {
-    // is there a better way to handle post requests?
+	// is there a better way to handle post requests?
 	client := transport.Client()
 	p := fmt.Sprintf("%s%s", requestURL, path)
 	req, err := http.NewRequest(method, p, nil)
