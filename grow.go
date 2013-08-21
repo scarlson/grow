@@ -8,6 +8,7 @@ import (
 	"math/rand"
 	"net/http"
 	"net/url"
+	"strings"
 	"time"
 )
 
@@ -56,15 +57,94 @@ func randInt(min int, max int) int {
                          PUBLIC FUNCS
 =========================================================================== */
 
-// this is redundant to the comment method that should do the same.  Then again,
-// it should be a commentable interface so you can comment on links as well
-func SubmitComment(commentable) error {
+// api/comment, reply to a commentable thing
+// api_type, text, thing_id, uh
+func SubmitComment(le commentable) error {
+	if !strings.Contains(config.Scope, "submit") {
+		return &Account{}, nil // TODO: out of scope error
+	}
 	return nil
 }
 
-// reddit's api/v1/me handler, returns the authed user as an Account object,
+// api/del, delete a comment
+func DelComment(le *Comment) error {
+	if !strings.Contains(config.Scope, "edit") {
+		return &Account{}, nil // TODO: out of scope error
+	}
+	return nil
+}
+
+// api/editusertext, edit a comment or self post
+func EditUserText() error {
+	if !strings.Contains(config.Scope, "edit") {
+		return &Account{}, nil // TODO: out of scope error
+	}
+	return nil
+}
+
+// api/info, fetch a link or list of links by url
+func LinkInfo() error {
+	if !strings.Contains(config.Scope, "read") {
+		return &Account{}, nil // TODO: out of scope error
+	}
+	return nil
+}
+
+// api/marknsfw, report a comment/link as NSFW
+func MarkNSFW() error {
+	if !strings.Contains(config.Scope, "modposts") {
+		return &Account{}, nil // TODO: out of scope error
+	}
+	return nil
+}
+
+// api/set_contest_mode, set an object's "contest" mode
+func SetContest(val bool) error {
+	if !strings.Contains(config.Scope, "modposts") {
+		return &Account{}, nil // TODO: out of scope error
+	}
+	return nil
+}
+
+// api/set_subreddit_sticky, set a link as subreddit's sticky
+func SetSubredditSticky() error {
+	if !strings.Contains(config.Scope, "modposts") {
+		return &Account{}, nil // TODO: out of scope error
+	}
+	return nil
+}
+
+// api/submit, submit a link to a subreddit
+func Submit() error {
+	if !strings.Contains(config.Scope, "submit") {
+		return &Account{}, nil // TODO: out of scope error
+	}
+	return nil
+}
+
+// api/unmarknsfw, remove a NSFW mark -- should probably just make this a toggle?
+func UnmarkNSFW() error {
+	if !strings.Contains(config.Scope, "modposts") {
+		return nil // TODO: out of scope error
+	}
+	return nil
+}
+
+// api/vote, upvote/downvote a link/comment
+// http://www.reddit.com/dev/api#POST_api_vote
+func Vote(le votable, dir int) error {
+	if !strings.Contains(config.Scope, "vote") {
+		return nil // TODO: out of scope error
+	}
+	return nil
+}
+
+// api/v1/me, returns the authed user as an Account object,
 // should eventually refactor to return AccountThing instead
 func Me() (*Account, error) {
+	if !strings.Contains(config.Scope, "identity") {
+		return &Account{}, nil // TODO: out of scope error
+	}
 	client := transport.Client()
 	p := fmt.Sprintf("%s%s", requestURL, "/api/v1/me")
 	req, err := http.NewRequest("GET", p, nil)
@@ -85,7 +165,7 @@ func Me() (*Account, error) {
 	// read the contents from the http response
 	contents, err := ioutil.ReadAll(res.Body)
 	account := &Account{}
-	// cast the contents into an account objects -- why is this not an account thing?
+	// cast the contents into an account object -- why is this not an account thing?
 	err = json.Unmarshal(contents, account)
 	return account, err
 }
@@ -106,8 +186,12 @@ func GetUser(name string) (Account, error) {
 	return acc, nil
 }
 
-// fetch a subreddit's about.json, return a subreddit object, uses OAuth -- should it not?
+// fetch a subreddit's about.json, return a subreddit object, uses OAuth
+// should refactor to return SubredditThing instead
 func GetSubreddit(name string) (Subreddit, error) {
+	if !strings.Contains(config.Scope, "read") {
+		return &Account{}, nil // TODO: out of scope error
+	}
 	suburl := fmt.Sprintf("/r/%s/about.json", name)
 	contents, err := oauthRequest("GET", suburl, UserAgent)
 	subt := &subredditThing{}
@@ -138,6 +222,7 @@ func noauthRequest(method string, url string, user string) ([]byte, error) {
 
 // send an oauthed request using a tokenized transport, data returned will depend on authed user
 func oauthRequest(method string, path string, user string) ([]byte, error) {
+    // is there a better way to handle post requests?
 	client := transport.Client()
 	p := fmt.Sprintf("%s%s", requestURL, path)
 	req, err := http.NewRequest(method, p, nil)
