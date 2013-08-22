@@ -319,6 +319,71 @@ func UnmarkNSFW() error {
                           PRIVATE MESSAGES SCOPE
 =========================================================================== */
 
+// api/block
+func Block() error {
+	if !strings.Contains(config.Scope, "privatemessages") {
+		return nil // TODO: out of scope error
+	}
+	return nil
+}
+
+// api/compose
+func Compose() error {
+	if !strings.Contains(config.Scope, "privatemessages") {
+		return nil // TODO: out of scope error
+	}
+	return nil
+}
+
+// api/read_message
+func ReadMessage() error {
+	if !strings.Contains(config.Scope, "privatemessages") {
+		return nil // TODO: out of scope error
+	}
+	return nil
+}
+
+// api/unread_message
+func UnreadMessage() error {
+	if !strings.Contains(config.Scope, "privatemessages") {
+		return nil // TODO: out of scope error
+	}
+	return nil
+}
+
+// message/inbox
+func Inbox() error {
+	if !strings.Contains(config.Scope, "privatemessages") {
+		return nil // TODO: out of scope error
+	}
+	return nil
+}
+
+// message/sent
+func Sent() error {
+	if !strings.Contains(config.Scope, "privatemessages") {
+		return nil // TODO: out of scope error
+	}
+	return nil
+}
+
+// message/unread
+func Unread() error {
+	if !strings.Contains(config.Scope, "privatemessages") {
+		return nil // TODO: out of scope error
+	}
+	return nil
+}
+
+// message/where
+func Where() error {
+	if !strings.Contains(config.Scope, "privatemessages") {
+		return nil // TODO: out of scope error
+	}
+	return nil
+}
+
+
 /* ===========================================================================
                           UNAUTHED HANDLERS
 =========================================================================== */
