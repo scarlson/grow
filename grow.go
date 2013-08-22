@@ -113,7 +113,6 @@ func EditUserText() error {
 =========================================================================== */
 
 // api/comment, reply to a commentable thing
-// api_type, text, thing_id, uh
 func SubmitComment(le commentable) error {
 	if !strings.Contains(config.Scope, "submit") {
 		return nil // TODO: out of scope error
@@ -122,7 +121,7 @@ func SubmitComment(le commentable) error {
 }
 
 // api/submit, submit a link to a subreddit
-func Submit() error {
+func SubmitLink() error {
 	if !strings.Contains(config.Scope, "submit") {
 		return nil // TODO: out of scope error
 	}
@@ -135,6 +134,102 @@ func Submit() error {
 
 // api/info, fetch a link or list of links by url
 func LinkInfo() error {
+	if !strings.Contains(config.Scope, "read") {
+		return nil // TODO: out of scope error
+	}
+	return nil
+}
+
+// api/multi/mine
+func MultiMine() error {
+	if !strings.Contains(config.Scope, "read") {
+		return nil // TODO: out of scope error
+	}
+	return nil
+}
+
+// api/multi/multipath
+func MultiMultipath() error {
+	if !strings.Contains(config.Scope, "read") {
+		return nil // TODO: out of scope error
+	}
+	return nil
+}
+
+// api/multi/multipath/description
+func GetMultipathDescription() error {
+	if !strings.Contains(config.Scope, "read") {
+		return nil // TODO: out of scope error
+	}
+	return nil
+}
+
+// api/multi/multipath/description
+func PutMultipathDescription() error {
+	if !strings.Contains(config.Scope, "read") {
+		return nil // TODO: out of scope error
+	}
+	return nil
+}
+
+// api/multi/multipath/r/srname
+func MultipathSubreddit() error {
+	if !strings.Contains(config.Scope, "read") {
+		return nil // TODO: out of scope error
+	}
+	return nil
+}
+
+// comments/article
+func ArticleComments() error {
+	if !strings.Contains(config.Scope, "read") {
+		return nil // TODO: out of scope error
+	}
+	return nil
+}
+
+// controversial
+func Controversial() error {
+	if !strings.Contains(config.Scope, "read") {
+		return nil // TODO: out of scope error
+	}
+	return nil
+}
+
+// hot
+func Hot() error {
+	if !strings.Contains(config.Scope, "read") {
+		return nil // TODO: out of scope error
+	}
+	return nil
+}
+
+// listing
+func GetListing() error {
+	if !strings.Contains(config.Scope, "read") {
+		return nil // TODO: out of scope error
+	}
+	return nil
+}
+
+// new
+func New() error {
+	if !strings.Contains(config.Scope, "read") {
+		return nil // TODO: out of scope error
+	}
+	return nil
+}
+
+// top
+func Top() error {
+	if !strings.Contains(config.Scope, "read") {
+		return nil // TODO: out of scope error
+	}
+	return nil
+}
+
+// sort
+func Sort() error {
 	if !strings.Contains(config.Scope, "read") {
 		return nil // TODO: out of scope error
 	}
@@ -205,10 +300,31 @@ func UnmarkNSFW() error {
 }
 
 /* ===========================================================================
+                          MOD CONFIG SCOPE
+=========================================================================== */
+
+/* ===========================================================================
+                          MOD FLAIR SCOPE
+=========================================================================== */
+
+/* ===========================================================================
+                          MOD LOG SCOPE
+=========================================================================== */
+
+/* ===========================================================================
+                          MY SUBREDDITS SCOPE
+=========================================================================== */
+
+/* ===========================================================================
+                          PRIVATE MESSAGES SCOPE
+=========================================================================== */
+
+/* ===========================================================================
                           UNAUTHED HANDLERS
 =========================================================================== */
 
 // fetch a user's about.json and return its account object, doesn't use OAuth
+// refactor to accountthing?
 func GetUser(name string) (Account, error) {
 	url := fmt.Sprintf("http://reddit.com/user/%s/about.json", name)
 	req, err := noauthRequest("GET", url, UserAgent)
