@@ -5,7 +5,7 @@ import (
 	"fmt"
 )
 
-// Type: t2, reddit account wrapper
+// Type: t2_, reddit account wrapper
 type accountThing struct {
 	Id   string
 	Name string

@@ -54,90 +54,8 @@ func randInt(min int, max int) int {
 }
 
 /* ===========================================================================
-                         PUBLIC FUNCS
+                         IDENTITY SCOPE
 =========================================================================== */
-
-// api/comment, reply to a commentable thing
-// api_type, text, thing_id, uh
-func SubmitComment(le commentable) error {
-	if !strings.Contains(config.Scope, "submit") {
-		return nil // TODO: out of scope error
-	}
-	return nil
-}
-
-// api/del, delete a comment
-func DelComment(le *Comment) error {
-	if !strings.Contains(config.Scope, "edit") {
-		return nil // TODO: out of scope error
-	}
-	return nil
-}
-
-// api/editusertext, edit a comment or self post
-func EditUserText() error {
-	if !strings.Contains(config.Scope, "edit") {
-		return nil // TODO: out of scope error
-	}
-	return nil
-}
-
-// api/info, fetch a link or list of links by url
-func LinkInfo() error {
-	if !strings.Contains(config.Scope, "read") {
-		return nil // TODO: out of scope error
-	}
-	return nil
-}
-
-// api/marknsfw, report a comment/link as NSFW
-func MarkNSFW() error {
-	if !strings.Contains(config.Scope, "modposts") {
-		return nil // TODO: out of scope error
-	}
-	return nil
-}
-
-// api/set_contest_mode, set an object's "contest" mode
-func SetContest(val bool) error {
-	if !strings.Contains(config.Scope, "modposts") {
-		return nil // TODO: out of scope error
-	}
-	return nil
-}
-
-// api/set_subreddit_sticky, set a link as subreddit's sticky
-func SetSubredditSticky() error {
-	if !strings.Contains(config.Scope, "modposts") {
-		return nil // TODO: out of scope error
-	}
-	return nil
-}
-
-// api/submit, submit a link to a subreddit
-func Submit() error {
-	if !strings.Contains(config.Scope, "submit") {
-		return nil // TODO: out of scope error
-	}
-	return nil
-}
-
-// api/unmarknsfw, remove a NSFW mark -- should probably just make this a toggle?
-func UnmarkNSFW() error {
-	if !strings.Contains(config.Scope, "modposts") {
-		return nil // TODO: out of scope error
-	}
-	return nil
-}
-
-// api/vote, upvote/downvote a link/comment
-// http://www.reddit.com/dev/api#POST_api_vote
-func Vote(le votable, dir int) error {
-	if !strings.Contains(config.Scope, "vote") {
-		return nil // TODO: out of scope error
-	}
-	return nil
-}
 
 // api/v1/me, returns the authed user as an Account object,
 // should eventually refactor to return AccountThing instead
@@ -170,20 +88,57 @@ func Me() (*Account, error) {
 	return account, err
 }
 
-// fetch a user's about.json and return its account object, doesn't use OAuth
-func GetUser(name string) (Account, error) {
-	url := fmt.Sprintf("http://reddit.com/user/%s/about.json", name)
-	req, err := noauthRequest("GET", url, UserAgent)
-	thing := &accountThing{}
-	if err != nil {
-		return Account{}, err
+/* ===========================================================================
+                         EDIT SCOPE
+=========================================================================== */
+
+// api/del, delete a comment
+func DelComment(le *Comment) error {
+	if !strings.Contains(config.Scope, "edit") {
+		return nil // TODO: out of scope error
 	}
-	err = json.Unmarshal(req, &thing)
-	if err != nil {
-		return Account{}, err
+	return nil
+}
+
+// api/editusertext, edit a comment or self post
+func EditUserText() error {
+	if !strings.Contains(config.Scope, "edit") {
+		return nil // TODO: out of scope error
 	}
-	acc := thing.Data
-	return acc, nil
+	return nil
+}
+
+/* ===========================================================================
+                         SUBMIT SCOPE
+=========================================================================== */
+
+// api/comment, reply to a commentable thing
+// api_type, text, thing_id, uh
+func SubmitComment(le commentable) error {
+	if !strings.Contains(config.Scope, "submit") {
+		return nil // TODO: out of scope error
+	}
+	return nil
+}
+
+// api/submit, submit a link to a subreddit
+func Submit() error {
+	if !strings.Contains(config.Scope, "submit") {
+		return nil // TODO: out of scope error
+	}
+	return nil
+}
+
+/* ===========================================================================
+                         READ SCOPE
+=========================================================================== */
+
+// api/info, fetch a link or list of links by url
+func LinkInfo() error {
+	if !strings.Contains(config.Scope, "read") {
+		return nil // TODO: out of scope error
+	}
+	return nil
 }
 
 // fetch a subreddit's about.json, return a subreddit object, uses OAuth
@@ -198,6 +153,75 @@ func GetSubreddit(name string) (Subreddit, error) {
 	err = json.Unmarshal(contents, subt)
 	sub := subt.Data
 	return sub, err
+}
+
+/* ===========================================================================
+                         VOTE SCOPE
+=========================================================================== */
+
+// api/vote, upvote/downvote a link/comment
+// http://www.reddit.com/dev/api#POST_api_vote
+func Vote(le votable, dir int) error {
+	if !strings.Contains(config.Scope, "vote") {
+		return nil // TODO: out of scope error
+	}
+	return nil
+}
+
+/* ===========================================================================
+                         MODPOSTS SCOPE
+=========================================================================== */
+
+// api/marknsfw, report a comment/link as NSFW
+func MarkNSFW() error {
+	if !strings.Contains(config.Scope, "modposts") {
+		return nil // TODO: out of scope error
+	}
+	return nil
+}
+
+// api/set_contest_mode, set an object's "contest" mode
+func SetContest(val bool) error {
+	if !strings.Contains(config.Scope, "modposts") {
+		return nil // TODO: out of scope error
+	}
+	return nil
+}
+
+// api/set_subreddit_sticky, set a link as subreddit's sticky
+func SetSubredditSticky() error {
+	if !strings.Contains(config.Scope, "modposts") {
+		return nil // TODO: out of scope error
+	}
+	return nil
+}
+
+// api/unmarknsfw, remove a NSFW mark -- should probably just make this a toggle?
+func UnmarkNSFW() error {
+	if !strings.Contains(config.Scope, "modposts") {
+		return nil // TODO: out of scope error
+	}
+	return nil
+}
+
+/* ===========================================================================
+                          UNAUTHED HANDLERS
+=========================================================================== */
+
+// fetch a user's about.json and return its account object, doesn't use OAuth
+func GetUser(name string) (Account, error) {
+	url := fmt.Sprintf("http://reddit.com/user/%s/about.json", name)
+	req, err := noauthRequest("GET", url, UserAgent)
+	thing := &accountThing{}
+	if err != nil {
+		return Account{}, err
+	}
+	err = json.Unmarshal(req, &thing)
+	if err != nil {
+		return Account{}, err
+	}
+	acc := thing.Data
+	return acc, nil
 }
 
 /* ===========================================================================
