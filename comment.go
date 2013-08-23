@@ -36,11 +36,6 @@ type Comment struct {
 	Downs                  float64
 }
 
-// build Comment's fullname
-func (le Comment) Fullname() string {
-	return fmt.Sprintf("t2_%s", le.Id)
-}
-
 // Upvote this comment for the authed user
 func (self *Comment) Upvote() error {
 	return nil

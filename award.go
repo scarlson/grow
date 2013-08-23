@@ -13,8 +13,3 @@ type Award struct {
 	Id   interface{}
 	Name interface{}
 }
-
-// build Award's fullname
-func (le Award) Fullname() string {
-	return le.Name.(string)
-}
