@@ -16,12 +16,14 @@ type Link struct {
 	Clicked                bool
 	Domain                 interface{}
 	Hidden                 bool
+	Id                     interface{}
 	Is_self                bool
 	Likes                  bool
 	Link_flair_css_class   interface{}
 	Link_flair_text        interface{}
 	Media                  struct{}
 	Media_embed            struct{}
+	Name                   interface{}
 	Num_comments           float64
 	Over_18                bool
 	Permalink              interface{}

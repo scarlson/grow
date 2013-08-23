@@ -15,6 +15,7 @@ type Message struct {
 	Body_html     interface{}
 	Context       interface{}
 	First_message struct{}
+	Id            interface{}
 	Likes         bool
 	Link_title    interface{}
 	Name          interface{}

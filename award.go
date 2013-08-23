@@ -10,9 +10,11 @@ type awardThing struct {
 
 // data payload from award wrapper
 type Award struct {
+	Id   interface{}
+	Name interface{}
 }
 
 // build Award's fullname
-func (le awardThing) Fullname() string {
-	return le.Name
+func (le Award) Fullname() string {
+	return le.Name.(string)
 }

@@ -25,6 +25,7 @@ type Comment struct {
 	Likes                  bool
 	Link_id                interface{}
 	Link_title             interface{}
+	Name                   interface{}
 	Num_reports            float64
 	Parent_id              interface{}
 	Score_hidden           bool
