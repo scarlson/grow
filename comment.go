@@ -1,5 +1,7 @@
 package grow
 
+import "fmt"
+
 // Type: t1_, reddit comment wrapper
 type commentThing struct {
 	Id   string
@@ -19,6 +21,7 @@ type Comment struct {
 	Body_html              interface{}
 	Edited                 interface{}
 	Gilded                 float64
+	Id                     interface{}
 	Likes                  bool
 	Link_id                interface{}
 	Link_title             interface{}
@@ -30,6 +33,11 @@ type Comment struct {
 	Distinguished          interface{}
 	Ups                    float64
 	Downs                  float64
+}
+
+// build Comment's fullname
+func (le Comment) Fullname() string {
+	return fmt.Sprintf("t2_%s", le.Id)
 }
 
 // Upvote this comment for the authed user

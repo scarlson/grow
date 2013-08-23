@@ -17,6 +17,7 @@ type Subreddit struct {
 	Header_img         interface{}
 	Header_size        []interface{}
 	Header_title       interface{}
+	Id                 interface{}
 	Over18             bool
 	Public_description interface{}
 	Subscribers        float64

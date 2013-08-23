@@ -133,7 +133,7 @@ func SubmitLink() error {
 =========================================================================== */
 
 // api/info, fetch a link or list of links by url
-func LinkInfo() error {
+func LinkInfo(id string, url string, limit int) error {
 	if !strings.Contains(config.Scope, "read") {
 		return nil // TODO: out of scope error
 	}
@@ -382,7 +382,6 @@ func Where() error {
 	}
 	return nil
 }
-
 
 /* ===========================================================================
                           UNAUTHED HANDLERS
