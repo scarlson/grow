@@ -10,6 +10,6 @@ type promoThing struct {
 
 // data payload for promotional wrapper
 type PromoCampaign struct {
-	Id   interface{}
-	Name interface{}
+	Id   string
+	Name string
 }

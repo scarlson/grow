@@ -10,6 +10,6 @@ type awardThing struct {
 
 // data payload from award wrapper
 type Award struct {
-	Id   interface{}
-	Name interface{}
+	Id   string
+	Name string
 }

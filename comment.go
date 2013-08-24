@@ -1,7 +1,5 @@
 package grow
 
-import "fmt"
-
 // Type: t1_, reddit comment wrapper
 type commentThing struct {
 	Id   string
@@ -21,11 +19,11 @@ type Comment struct {
 	Body_html              interface{}
 	Edited                 interface{}
 	Gilded                 float64
-	Id                     interface{}
+	Id                     string
 	Likes                  bool
 	Link_id                interface{}
 	Link_title             interface{}
-	Name                   interface{}
+	Name                   string
 	Num_reports            float64
 	Parent_id              interface{}
 	Score_hidden           bool

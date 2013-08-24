@@ -21,13 +21,13 @@ type Account struct {
 	Has_mail           interface{}
 	Has_mod_mail       interface{}
 	Has_verified_email bool
-	Id                 interface{}
+	Id                 string
 	Is_friend          bool
 	Is_gold            bool
 	Is_mod             bool
 	Link_karma         float64
 	Modhash            interface{}
-	Name               interface{}
+	Name               string
 	Over_18            bool
 }
 

@@ -76,7 +76,7 @@ func handleOAuth2Callback(w http.ResponseWriter, r *http.Request) {
 	otro, _ := grow.GetUser("kn0thing")
 	data["k"] = otro.Name
 	sub, _ := grow.GetSubreddit("redditdev")
-	data["sub"] = sub.Id
+	data["sub"] = sub.Name
 	data["comments"], _ = user.Comments()
 	userInfoTemplate.Execute(w, data)
 }

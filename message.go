@@ -15,10 +15,10 @@ type Message struct {
 	Body_html     interface{}
 	Context       interface{}
 	First_message struct{}
-	Id            interface{}
+	Id            string
 	Likes         bool
 	Link_title    interface{}
-	Name          interface{}
+	Name          string
 	New           bool
 	Parent_id     interface{}
 	Replies       interface{}
