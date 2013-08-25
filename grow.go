@@ -181,8 +181,11 @@ func MultipathSubreddit() error {
 }
 
 // comments/article
-func ArticleComments() error {
-	if !strings.Contains(config.Scope, "read") {
+func ArticleComments(article string, comment string, context string, depth string, limit int, sort string) error {
+	url := fmt.Sprintf("%s%s", requestURL, "/comments/article")
+	contents, err := oauthGetRequest(url)
+	_, _ = contents, err
+    if !strings.Contains(config.Scope, "read") {
 		return nil // TODO: out of scope error
 	}
 	return nil
@@ -243,7 +246,7 @@ func GetSubreddit(name string) (Subreddit, error) {
 		return Subreddit{}, nil // TODO: out of scope error
 	}
 	suburl := fmt.Sprintf("/r/%s/about.json", name)
-	contents, err := oauthRequest("GET", suburl, UserAgent)
+	contents, err := oauthGetRequest(suburl)
 	subt := &subredditThing{}
 	err = json.Unmarshal(contents, subt)
 	sub := subt.Data
@@ -391,7 +394,7 @@ func Where() error {
 // refactor to accountthing?
 func GetUser(name string) (Account, error) {
 	url := fmt.Sprintf("http://reddit.com/user/%s/about.json", name)
-	req, err := noauthRequest("GET", url, UserAgent)
+	req, err := noauthRequest("GET", url)
 	thing := &accountThing{}
 	if err != nil {
 		return Account{}, err
@@ -409,13 +412,13 @@ func GetUser(name string) (Account, error) {
 =========================================================================== */
 
 // send a non tokenized request for non-API restricted data, usually an about.json or some such
-func noauthRequest(method string, url string, user string) ([]byte, error) {
+func noauthRequest(method string, url string) ([]byte, error) {
 	client := &http.Client{}
 	req, err := http.NewRequest(method, url, nil)
 	if err != nil {
 		return nil, err
 	}
-	req.Header.Add("User-Agent", user)
+	req.Header.Add("User-Agent", UserAgent)
 	resp, err := client.Do(req)
 	defer resp.Body.Close()
 	if err != nil {
@@ -425,14 +428,34 @@ func noauthRequest(method string, url string, user string) ([]byte, error) {
 }
 
 // send an oauthed request using a tokenized transport, data returned will depend on authed user
-func oauthRequest(method string, path string, user string) ([]byte, error) {
+func oauthPostRequest(path string, data *url.Values) ([]byte, error) {
 	// is there a better way to handle post requests?
 	client := transport.Client()
 	p := fmt.Sprintf("%s%s", requestURL, path)
-	req, err := http.NewRequest(method, p, nil)
+	req, err := http.NewRequest("POST", p, nil)
 
 	// build required headers
-	req.Header.Add("User-Agent", user)
+	req.Header.Add("User-Agent", UserAgent)
+	access_token := fmt.Sprintf("bearer %s", transport.Token.AccessToken)
+	req.Header.Add("Authorization", access_token)
+
+	// send the request
+	res, err := client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer res.Body.Close()
+	return ioutil.ReadAll(res.Body)
+}
+
+// send an oauthed request using a tokenized transport, data returned will depend on authed user
+func oauthGetRequest(path string) ([]byte, error) {
+	client := transport.Client()
+	p := fmt.Sprintf("%s%s", requestURL, path)
+	req, err := http.NewRequest("GET", p, nil)
+
+	// build required headers
+	req.Header.Add("User-Agent", UserAgent)
 	access_token := fmt.Sprintf("bearer %s", transport.Token.AccessToken)
 	req.Header.Add("Authorization", access_token)
 

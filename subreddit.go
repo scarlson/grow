@@ -11,7 +11,7 @@ type subredditThing struct {
 // data payload for subreddit wrapper
 type Subreddit struct {
 	Accounts_active    float64
-	Description        interface{}
+	Description        string
 	Description_html   interface{}
 	Display_name       interface{}
 	Header_img         interface{}
@@ -20,9 +20,9 @@ type Subreddit struct {
 	Id                 string
 	Name               string
 	Over18             bool
-	Public_description interface{}
+	Public_description string
 	Subscribers        float64
-	Title              interface{}
+	Title              string
 	Url                interface{}
 }
 
