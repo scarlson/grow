@@ -20,6 +20,7 @@ var config = &oauth.Config{}
 var requestURL = "https://oauth.reddit.com"
 var state = ""
 var UserAgent = ""
+var AuthedUser = Account{}
 var transport = &oauth.Transport{
 	Config:    config,
 	Transport: &http.Transport{},
@@ -41,11 +42,11 @@ type commentable interface {
 
 // random string generator
 func randomString(l int) string {
-	bytes := make([]byte, l)
+	bites := make([]byte, l)
 	for i := 0; i < l; i++ {
-		bytes[i] = byte(randInt(65, 90))
+		bites[i] = byte(randInt(65, 90))
 	}
-	return string(bytes)
+	return string(bites)
 }
 
 // these funcs are one of those things that should be built into the core library, imo
@@ -82,9 +83,11 @@ func Me() (*Account, error) {
 
 	// read the contents from the http response
 	contents, err := ioutil.ReadAll(res.Body)
+	fmt.Println(string(contents))
 	account := &Account{}
 	// cast the contents into an account object -- why is this not an account thing?
 	err = json.Unmarshal(contents, account)
+	AuthedUser = *account
 	return account, err
 }
 
@@ -185,7 +188,7 @@ func ArticleComments(article string, comment string, context string, depth strin
 	url := fmt.Sprintf("%s%s", requestURL, "/comments/article")
 	contents, err := oauthGetRequest(url)
 	_, _ = contents, err
-    if !strings.Contains(config.Scope, "read") {
+	if !strings.Contains(config.Scope, "read") {
 		return nil // TODO: out of scope error
 	}
 	return nil
@@ -331,11 +334,26 @@ func Block() error {
 }
 
 // api/compose
-func Compose() error {
+/*
+api_type - the string json
+captcha - the user's response to the CAPTCHA challenge
+iden - the identifier of the CAPTCHA challenge
+subject
+text - raw markdown text
+to - the name of an existing user
+uh - a valid modhash
+*/
+func Compose(to string, subject string, body string) ([]byte, error) {
 	if !strings.Contains(config.Scope, "privatemessages") {
-		return nil // TODO: out of scope error
+		return nil, nil // TODO: out of scope error
 	}
-	return nil
+	v := url.Values{}
+	v.Set("api_type", "json")
+	v.Set("subject", subject)
+	v.Set("text", body)
+	v.Set("to", to)
+	v.Set("uh", AuthedUser.Modhash)
+	return oauthPostRequest("/api/compose", v)
 }
 
 // api/read_message
@@ -428,11 +446,11 @@ func noauthRequest(method string, url string) ([]byte, error) {
 }
 
 // send an oauthed request using a tokenized transport, data returned will depend on authed user
-func oauthPostRequest(path string, data *url.Values) ([]byte, error) {
+func oauthPostRequest(path string, data url.Values) ([]byte, error) {
 	// is there a better way to handle post requests?
 	client := transport.Client()
 	p := fmt.Sprintf("%s%s", requestURL, path)
-	req, err := http.NewRequest("POST", p, nil)
+	req, err := http.NewRequest("POST", p, strings.NewReader(data.Encode()))
 
 	// build required headers
 	req.Header.Add("User-Agent", UserAgent)

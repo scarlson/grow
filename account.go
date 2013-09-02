@@ -26,7 +26,7 @@ type Account struct {
 	Is_gold            bool
 	Is_mod             bool
 	Link_karma         float64
-	Modhash            interface{}
+	Modhash            string
 	Name               string
 	Over_18            bool
 }

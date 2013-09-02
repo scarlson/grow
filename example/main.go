@@ -51,7 +51,7 @@ func Init() {
 	if err != nil {
 		panic(err)
 	}
-	grow.Config(conf.UserAgent, "identity,read", conf.RedditId, conf.RedditSecret)
+	grow.Config(conf.UserAgent, "identity,read,privatemessages", conf.RedditId, conf.RedditSecret)
 }
 
 /* ===========================================================================
@@ -78,6 +78,8 @@ func handleOAuth2Callback(w http.ResponseWriter, r *http.Request) {
 	sub, _ := grow.GetSubreddit("redditdev")
 	data["sub"] = sub.Name
 	data["comments"], _ = user.Comments()
+	d, _ := grow.Compose("kamoi", "test", "test")
+	data["compose"] = string(d)
 	userInfoTemplate.Execute(w, data)
 }
 
