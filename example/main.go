@@ -51,7 +51,7 @@ func Init() {
 	if err != nil {
 		panic(err)
 	}
-	grow.Config(conf.UserAgent, "identity,read,privatemessages", conf.RedditId, conf.RedditSecret)
+	grow.Config(conf.UserAgent, "identity,submit,read,privatemessages", conf.RedditId, conf.RedditSecret)
 }
 
 /* ===========================================================================
@@ -73,6 +73,8 @@ func handleOAuth2Callback(w http.ResponseWriter, r *http.Request) {
 	user, _ := grow.Authorized(w, r)
 	data := make(map[string]interface{})
 	data["user"] = user.Name
+	a, b := grow.SubmitComment(nil, "ohshit")
+	data["noauth"], data["noautherr"] = string(a), b
 	otro, _ := grow.GetUser("kn0thing")
 	data["k"] = otro.Name
 	sub, _ := grow.GetSubreddit("redditdev")

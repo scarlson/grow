@@ -26,16 +26,6 @@ var transport = &oauth.Transport{
 	Transport: &http.Transport{},
 }
 
-// generic interface for any object that's votable
-type votable interface {
-	Upvote() error
-	Downvote() error
-}
-
-// generic interface for any object that's commentable
-type commentable interface {
-}
-
 /* ===========================================================================
                          PRIVATE HELPER FUNCS
 =========================================================================== */
@@ -57,6 +47,25 @@ func randInt(min int, max int) int {
 /* ===========================================================================
                          IDENTITY SCOPE
 =========================================================================== */
+
+// api/me, hopefully returns a user with a modhash because oauth me doesn't
+func NoauthMe() (*Account, error) {
+	url := fmt.Sprintf("%s%s", requestURL, "/api/me.json")
+	req, err := noauthRequest("GET", url)
+	thing := &accountThing{}
+	if err != nil {
+		fmt.Printf("\nErr1: %v\n%v\n", err, string(req))
+		return &Account{}, err
+	}
+	err = json.Unmarshal(req, &thing)
+	if err != nil {
+		fmt.Printf("\nErr2: %v\n%v\n", err, string(req))
+		return &Account{}, err
+	}
+	acc := thing.Data
+	fmt.Printf("\n\nNoAuthed User: %+v\nModhash: %+v\n", acc, acc.Modhash)
+	return &acc, nil
+}
 
 // api/v1/me, returns the authed user as an Account object,
 // should eventually refactor to return AccountThing instead
@@ -83,11 +92,12 @@ func Me() (*Account, error) {
 
 	// read the contents from the http response
 	contents, err := ioutil.ReadAll(res.Body)
-	fmt.Println(string(contents))
+	//fmt.Println(string(contents))
 	account := &Account{}
 	// cast the contents into an account object -- why is this not an account thing?
 	err = json.Unmarshal(contents, account)
 	AuthedUser = *account
+	//fmt.Printf("\n\nAuthed User: %+v\nModhash: %+v\n", AuthedUser, AuthedUser.Modhash)
 	return account, err
 }
 
@@ -116,11 +126,16 @@ func EditUserText() error {
 =========================================================================== */
 
 // api/comment, reply to a commentable thing
-func SubmitComment(le commentable) error {
+func SubmitComment(le commentable, text string) ([]byte, error) {
 	if !strings.Contains(config.Scope, "submit") {
-		return nil // TODO: out of scope error
+		return nil, nil // TODO: out of scope error
 	}
-	return nil
+	v := url.Values{}
+	v.Set("api_type", "json")
+	v.Set("text", text)
+	v.Set("thing_id", "t3_1lm2hf")
+	v.Set("uh", AuthedUser.Modhash)
+	return oauthPostRequest("/api/compose", v)
 }
 
 // api/submit, submit a link to a subreddit
@@ -431,7 +446,7 @@ func GetUser(name string) (Account, error) {
 
 // send a non tokenized request for non-API restricted data, usually an about.json or some such
 func noauthRequest(method string, url string) ([]byte, error) {
-	client := &http.Client{}
+	client := transport.Client()
 	req, err := http.NewRequest(method, url, nil)
 	if err != nil {
 		return nil, err
@@ -456,7 +471,7 @@ func oauthPostRequest(path string, data url.Values) ([]byte, error) {
 	req.Header.Add("User-Agent", UserAgent)
 	access_token := fmt.Sprintf("bearer %s", transport.Token.AccessToken)
 	req.Header.Add("Authorization", access_token)
-
+	fmt.Printf("OAuth Post: %v, %v", req, data)
 	// send the request
 	res, err := client.Do(req)
 	if err != nil {
