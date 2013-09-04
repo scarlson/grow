@@ -8,6 +8,7 @@ import (
 	"math/rand"
 	"net/http"
 	"net/url"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -50,8 +51,8 @@ func randInt(min int, max int) int {
 
 // api/me, hopefully returns a user with a modhash because oauth me doesn't
 func NoauthMe() (*Account, error) {
-	url := fmt.Sprintf("%s%s", requestURL, "/api/me.json")
-	req, err := noauthRequest("GET", url)
+	urls := fmt.Sprintf("%s%s", requestURL, "/api/me.json")
+	req, err := noauthRequest("GET", urls)
 	thing := &accountThing{}
 	if err != nil {
 		fmt.Printf("\nErr1: %v\n%v\n", err, string(req))
@@ -126,7 +127,7 @@ func EditUserText() error {
 =========================================================================== */
 
 // api/comment, reply to a commentable thing
-func SubmitComment(le commentable, text string) ([]byte, error) {
+func SubmitComment(le interface{}, text string) ([]byte, error) {
 	if !strings.Contains(config.Scope, "submit") {
 		return nil, nil // TODO: out of scope error
 	}
@@ -151,11 +152,22 @@ func SubmitLink() error {
 =========================================================================== */
 
 // api/info, fetch a link or list of links by url
-func LinkInfo(id string, url string, limit int) error {
+func LinkInfo(id string, limit int, turl string) ([]byte, error) {
 	if !strings.Contains(config.Scope, "read") {
-		return nil // TODO: out of scope error
+		return nil, nil // TODO: out of scope error
 	}
-	return nil
+	v := url.Values{}
+	v.Set("id", id)
+	if limit > 100 {
+		limit = 100
+	}
+	if limit < 1 {
+		limit = 1
+	}
+	v.Set("limit", strconv.Itoa(limit))
+	v.Set("url", turl)
+	durl := fmt.Sprintf("/api/info%s", v.Encode())
+	return oauthGetRequest(durl)
 }
 
 // api/multi/mine
@@ -200,8 +212,8 @@ func MultipathSubreddit() error {
 
 // comments/article
 func ArticleComments(article string, comment string, context string, depth string, limit int, sort string) error {
-	url := fmt.Sprintf("%s%s", requestURL, "/comments/article")
-	contents, err := oauthGetRequest(url)
+	urls := fmt.Sprintf("%s%s", requestURL, "/comments/article")
+	contents, err := oauthGetRequest(urls)
 	_, _ = contents, err
 	if !strings.Contains(config.Scope, "read") {
 		return nil // TODO: out of scope error
@@ -426,8 +438,8 @@ func Where() error {
 // fetch a user's about.json and return its account object, doesn't use OAuth
 // refactor to accountthing?
 func GetUser(name string) (Account, error) {
-	url := fmt.Sprintf("http://reddit.com/user/%s/about.json", name)
-	req, err := noauthRequest("GET", url)
+	urls := fmt.Sprintf("http://reddit.com/user/%s/about.json", name)
+	req, err := noauthRequest("GET", urls)
 	thing := &accountThing{}
 	if err != nil {
 		return Account{}, err
@@ -445,9 +457,9 @@ func GetUser(name string) (Account, error) {
 =========================================================================== */
 
 // send a non tokenized request for non-API restricted data, usually an about.json or some such
-func noauthRequest(method string, url string) ([]byte, error) {
+func noauthRequest(method string, urls string) ([]byte, error) {
 	client := transport.Client()
-	req, err := http.NewRequest(method, url, nil)
+	req, err := http.NewRequest(method, urls, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -517,8 +529,8 @@ func Config(useragent string, scope string, redditid string, redditsecret string
 func Authorize(w http.ResponseWriter, r *http.Request) {
 	rand.Seed(time.Now().UTC().UnixNano())
 	state = randomString(10)
-	url := config.AuthCodeURL(state)
-	http.Redirect(w, r, url, http.StatusFound)
+	urls := config.AuthCodeURL(state)
+	http.Redirect(w, r, urls, http.StatusFound)
 }
 
 // oauth callback from reddit
