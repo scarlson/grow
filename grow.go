@@ -196,27 +196,29 @@ func LinkInfo(id string, limit int, turl string) ([]byte, error) {
 }
 
 // api/multi/mine
-func MultiMine() error {
+func MultiMine() ([]byte, error) {
 	if !strings.Contains(config.Scope, "read") {
-		return nil // TODO: out of scope error
+		return nil, nil // TODO: out of scope error
 	}
-	return nil
+	return oauthGetRequest("/api/multi/mine")
 }
 
 // api/multi/multipath
-func MultiMultipath() error {
+func MultiMultipath(multipath string) ([]byte, error) {
 	if !strings.Contains(config.Scope, "read") {
-		return nil // TODO: out of scope error
+		return nil, nil // TODO: out of scope error
 	}
-	return nil
+	urls := fmt.Sprintf("/api/multi/%s", multipath)
+	return oauthGetRequest(urls)
 }
 
 // api/multi/multipath/description
-func GetMultipathDescription() error {
+func GetMultipathDescription() ([]byte, error) {
 	if !strings.Contains(config.Scope, "read") {
 		return nil // TODO: out of scope error
 	}
-	return nil
+	urls := fmt.Sprintf("/api/multi/%s/description", multipath)
+	return oauthGetRequest(urls)
 }
 
 // api/multi/multipath/description
