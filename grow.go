@@ -157,16 +157,20 @@ func LinkInfo(id string, limit int, turl string) ([]byte, error) {
 		return nil, nil // TODO: out of scope error
 	}
 	v := url.Values{}
-	v.Set("id", id)
+	if id != "" {
+		v.Set("id", id)
+	}
 	if limit > 100 {
 		limit = 100
 	}
 	if limit < 1 {
 		limit = 1
 	}
+	if turl != "" {
+		v.Set("url", turl)
+	}
 	v.Set("limit", strconv.Itoa(limit))
-	v.Set("url", turl)
-	durl := fmt.Sprintf("/api/info%s", v.Encode())
+	durl := fmt.Sprintf("/api/info?%s", v.Encode())
 	return oauthGetRequest(durl)
 }
 
@@ -458,6 +462,7 @@ func GetUser(name string) (Account, error) {
 
 // send a non tokenized request for non-API restricted data, usually an about.json or some such
 func noauthRequest(method string, urls string) ([]byte, error) {
+	fmt.Printf("\n\n%vting: %v\n\n", method, urls)
 	client := transport.Client()
 	req, err := http.NewRequest(method, urls, nil)
 	if err != nil {
@@ -465,6 +470,7 @@ func noauthRequest(method string, urls string) ([]byte, error) {
 	}
 	req.Header.Add("User-Agent", UserAgent)
 	resp, err := client.Do(req)
+	fmt.Printf("\n\nNoauth req: %v\n\n", req)
 	defer resp.Body.Close()
 	if err != nil {
 		return nil, err
@@ -477,6 +483,7 @@ func oauthPostRequest(path string, data url.Values) ([]byte, error) {
 	// is there a better way to handle post requests?
 	client := transport.Client()
 	p := fmt.Sprintf("%s%s", requestURL, path)
+	fmt.Printf("\n\nOAuth POSTting: %v\n\n", p)
 	req, err := http.NewRequest("POST", p, strings.NewReader(data.Encode()))
 
 	// build required headers
@@ -497,6 +504,7 @@ func oauthPostRequest(path string, data url.Values) ([]byte, error) {
 func oauthGetRequest(path string) ([]byte, error) {
 	client := transport.Client()
 	p := fmt.Sprintf("%s%s", requestURL, path)
+	fmt.Printf("\n\nOAuth GETting: %v\n\n", p)
 	req, err := http.NewRequest("GET", p, nil)
 
 	// build required headers
@@ -505,6 +513,7 @@ func oauthGetRequest(path string) ([]byte, error) {
 	req.Header.Add("Authorization", access_token)
 
 	// send the request
+	fmt.Printf("OAuth Get: %v", req)
 	res, err := client.Do(req)
 	if err != nil {
 		return nil, err
