@@ -19,13 +19,17 @@ import (
 
 var config = &oauth.Config{}
 var requestURL = "https://oauth.reddit.com"
-var state = ""
-var UserAgent = ""
+var global_delay = 2 * time.Second // reddit throttles requests to 30/min, we pop a work queue every 2s
+var lastRequest time.Time
+var state string
+var UserAgent string
 var AuthedUser = Account{}
 var transport = &oauth.Transport{
 	Config:    config,
 	Transport: &http.Transport{},
 }
+
+//requestChan := make(chan []byte)
 
 /* ===========================================================================
                          PRIVATE HELPER FUNCS
@@ -43,6 +47,23 @@ func randomString(l int) string {
 // these funcs are one of those things that should be built into the core library, imo
 func randInt(min int, max int) int {
 	return min + rand.Intn(max-min)
+}
+
+func redditQueue(r *http.Request) ([]byte, error) {
+	// process the queue requests every global_delay seconds
+	// there should be a better way to do this without blocking
+	client := transport.Client()
+	for time.Now().Before(lastRequest.Add(global_delay)) {
+		time.Sleep(time.Millisecond * 100)
+	}
+	resp, err := client.Do(r)
+	fmt.Printf("\n\nQueue req: %v\n\n", r)
+	defer resp.Body.Close()
+	if err != nil {
+		return nil, err
+	}
+	lastRequest = time.Now()
+	return ioutil.ReadAll(resp.Body)
 }
 
 /* ===========================================================================
@@ -463,63 +484,47 @@ func GetUser(name string) (Account, error) {
 // send a non tokenized request for non-API restricted data, usually an about.json or some such
 func noauthRequest(method string, urls string) ([]byte, error) {
 	fmt.Printf("\n\n%vting: %v\n\n", method, urls)
-	client := transport.Client()
 	req, err := http.NewRequest(method, urls, nil)
 	if err != nil {
 		return nil, err
 	}
 	req.Header.Add("User-Agent", UserAgent)
-	resp, err := client.Do(req)
-	fmt.Printf("\n\nNoauth req: %v\n\n", req)
-	defer resp.Body.Close()
-	if err != nil {
-		return nil, err
-	}
-	return ioutil.ReadAll(resp.Body)
+	return redditQueue(req)
 }
 
 // send an oauthed request using a tokenized transport, data returned will depend on authed user
 func oauthPostRequest(path string, data url.Values) ([]byte, error) {
 	// is there a better way to handle post requests?
-	client := transport.Client()
 	p := fmt.Sprintf("%s%s", requestURL, path)
 	fmt.Printf("\n\nOAuth POSTting: %v\n\n", p)
 	req, err := http.NewRequest("POST", p, strings.NewReader(data.Encode()))
+	if err != nil {
+		return nil, err
+	}
 
 	// build required headers
 	req.Header.Add("User-Agent", UserAgent)
 	access_token := fmt.Sprintf("bearer %s", transport.Token.AccessToken)
 	req.Header.Add("Authorization", access_token)
-	fmt.Printf("OAuth Post: %v, %v", req, data)
-	// send the request
-	res, err := client.Do(req)
-	if err != nil {
-		return nil, err
-	}
-	defer res.Body.Close()
-	return ioutil.ReadAll(res.Body)
+
+	return redditQueue(req)
 }
 
 // send an oauthed request using a tokenized transport, data returned will depend on authed user
 func oauthGetRequest(path string) ([]byte, error) {
-	client := transport.Client()
 	p := fmt.Sprintf("%s%s", requestURL, path)
 	fmt.Printf("\n\nOAuth GETting: %v\n\n", p)
 	req, err := http.NewRequest("GET", p, nil)
+	if err != nil {
+		return nil, err
+	}
 
 	// build required headers
 	req.Header.Add("User-Agent", UserAgent)
 	access_token := fmt.Sprintf("bearer %s", transport.Token.AccessToken)
 	req.Header.Add("Authorization", access_token)
 
-	// send the request
-	fmt.Printf("OAuth Get: %v", req)
-	res, err := client.Do(req)
-	if err != nil {
-		return nil, err
-	}
-	defer res.Body.Close()
-	return ioutil.ReadAll(res.Body)
+	return redditQueue(req)
 }
 
 // setup the oauth client according to the user's app data from reddit
