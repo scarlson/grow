@@ -213,9 +213,9 @@ func MultiMultipath(multipath string) ([]byte, error) {
 }
 
 // api/multi/multipath/description
-func GetMultipathDescription() ([]byte, error) {
+func GetMultipathDescription(multipath string) ([]byte, error) {
 	if !strings.Contains(config.Scope, "read") {
-		return nil // TODO: out of scope error
+		return nil, nil // TODO: out of scope error
 	}
 	urls := fmt.Sprintf("/api/multi/%s/description", multipath)
 	return oauthGetRequest(urls)
