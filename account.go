@@ -39,14 +39,11 @@ func (user *Account) Comments() ([]Comment, error) {
 	if err != nil {
 		return []Comment{}, err
 	}
-	fmt.Printf("\nreq= %v\n", string(req))
 	err = json.Unmarshal(req, commentThing)
-	fmt.Printf("\nCommentThing = %v\n", commentThing)
 	comments := commentThing.Data.Children
 	c := make([]Comment, len(comments))
 	for i := range comments {
 		c[i] = comments[i].Data
 	}
-	fmt.Printf("\nComments = %v\n", comments)
 	return c, err
 }

@@ -3,8 +3,8 @@ package main
 import (
 	"encoding/json"
 	//"fmt"
-	"github.com/scarlson/grow"
-	//"grow"
+	//"github.com/scarlson/grow"
+	"grow"
 	"html/template"
 	"io/ioutil"
 	"net/http"
@@ -15,6 +15,7 @@ type Config struct {
 	RedditSecret string
 	RedditId     string
 	UserAgent    string
+	RedirectURL  string
 }
 
 // load process reads local json file to fill config struct
@@ -51,7 +52,7 @@ func Init() {
 	if err != nil {
 		panic(err)
 	}
-	grow.Config(conf.UserAgent, "identity,submit,read,privatemessages", conf.RedditId, conf.RedditSecret)
+	grow.Config(conf.UserAgent, "identity,submit,read,privatemessages", conf.RedditId, conf.RedditSecret, conf.RedirectURL)
 }
 
 /* ===========================================================================

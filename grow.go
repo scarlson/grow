@@ -57,7 +57,7 @@ func redditQueue(r *http.Request) ([]byte, error) {
 		time.Sleep(time.Millisecond * 100)
 	}
 	resp, err := client.Do(r)
-	fmt.Printf("\n\nQueue req: %v\n\n", r)
+	//fmt.Printf("\n\nQueue req: %v\n\n", r)
 	defer resp.Body.Close()
 	if err != nil {
 		return nil, err
@@ -76,16 +76,13 @@ func NoauthMe() (*Account, error) {
 	req, err := noauthRequest("GET", urls)
 	thing := &accountThing{}
 	if err != nil {
-		fmt.Printf("\nErr1: %v\n%v\n", err, string(req))
 		return &Account{}, err
 	}
 	err = json.Unmarshal(req, &thing)
 	if err != nil {
-		fmt.Printf("\nErr2: %v\n%v\n", err, string(req))
 		return &Account{}, err
 	}
 	acc := thing.Data
-	fmt.Printf("\n\nNoAuthed User: %+v\nModhash: %+v\n", acc, acc.Modhash)
 	return &acc, nil
 }
 
@@ -114,12 +111,10 @@ func Me() (*Account, error) {
 
 	// read the contents from the http response
 	contents, err := ioutil.ReadAll(res.Body)
-	//fmt.Println(string(contents))
 	account := &Account{}
 	// cast the contents into an account object -- why is this not an account thing?
 	err = json.Unmarshal(contents, account)
 	AuthedUser = *account
-	//fmt.Printf("\n\nAuthed User: %+v\nModhash: %+v\n", AuthedUser, AuthedUser.Modhash)
 	return account, err
 }
 
@@ -485,7 +480,6 @@ func GetUser(name string) (Account, error) {
 
 // send a non tokenized request for non-API restricted data, usually an about.json or some such
 func noauthRequest(method string, urls string) ([]byte, error) {
-	fmt.Printf("\n\n%vting: %v\n\n", method, urls)
 	req, err := http.NewRequest(method, urls, nil)
 	if err != nil {
 		return nil, err
@@ -498,7 +492,6 @@ func noauthRequest(method string, urls string) ([]byte, error) {
 func oauthPostRequest(path string, data url.Values) ([]byte, error) {
 	// is there a better way to handle post requests?
 	p := fmt.Sprintf("%s%s", requestURL, path)
-	fmt.Printf("\n\nOAuth POSTting: %v\n\n", p)
 	req, err := http.NewRequest("POST", p, strings.NewReader(data.Encode()))
 	if err != nil {
 		return nil, err
@@ -515,7 +508,6 @@ func oauthPostRequest(path string, data url.Values) ([]byte, error) {
 // send an oauthed request using a tokenized transport, data returned will depend on authed user
 func oauthGetRequest(path string) ([]byte, error) {
 	p := fmt.Sprintf("%s%s", requestURL, path)
-	fmt.Printf("\n\nOAuth GETting: %v\n\n", p)
 	req, err := http.NewRequest("GET", p, nil)
 	if err != nil {
 		return nil, err
