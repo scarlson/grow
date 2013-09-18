@@ -530,13 +530,13 @@ func oauthGetRequest(path string) ([]byte, error) {
 }
 
 // setup the oauth client according to the user's app data from reddit
-func Config(useragent string, scope string, redditid string, redditsecret string) bool {
+func Config(useragent string, scope string, redditid string, redditsecret string, redirect string) bool {
 	config.ClientId = redditid
 	config.ClientSecret = redditsecret
 	config.Scope = scope
 	config.AuthURL = "https://ssl.reddit.com/api/v1/authorize"
 	config.TokenURL = "https://ssl.reddit.com/api/v1/access_token"
-	config.RedirectURL = "http://redditbank.com/login"
+	config.RedirectURL = redirect
 	UserAgent = useragent
 	return true
 }
